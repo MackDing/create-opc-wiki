@@ -2,7 +2,9 @@
 # sync-agent-rules.sh — propagate agent-rules/main.md to enabled targets.
 #
 # Single source of truth: agent-rules/main.md
-# Targets are listed in agent-rules/.targets (one per line: claude/codex/cursor/cursor-legacy/vscode/trae)
+# Targets are listed in agent-rules/.targets (one key per line).
+# Supported keys: claude, codex, opencode, cursor, cursor-legacy, vscode,
+#                 trae, openclaw, hermes
 #
 # Usage:
 #   ./scripts/sync-agent-rules.sh           # sync all enabled targets
@@ -63,7 +65,7 @@ while IFS= read -r target || [[ -n "$target" ]]; do
     claude)
       write_target "$ROOT/CLAUDE.md"
       ;;
-    codex)
+    codex|opencode)
       write_target "$ROOT/AGENTS.md"
       ;;
     cursor)
@@ -77,6 +79,12 @@ while IFS= read -r target || [[ -n "$target" ]]; do
       ;;
     trae)
       write_target "$ROOT/.trae/rules.md"
+      ;;
+    openclaw)
+      write_target "$ROOT/.openclaw/rules.md"
+      ;;
+    hermes)
+      write_target "$ROOT/.hermes/agent.md"
       ;;
     *)
       echo "WARNING: unknown target '$target' in $TARGETS_FILE — skipping" >&2

@@ -1,17 +1,25 @@
 {
   "name": "create-opc-wiki",
-  "version": "0.1.0-alpha.0",
-  "description": "Build your own local LLM Wiki in 30 seconds. Multi-agent native (Claude/Codex/Cursor/VSCode/Trae), MCP server built-in, Astro static site publishing.",
+  "version": "1.0.0",
+  "description": "Scaffold a personal LLM wiki (Karpathy pattern). MCP-ready, multi-agent, publishable. Zero-prompt install for IM agents (OpenClaw, Hermes, Codex, Claude Code).",
   "keywords": [
-    "wiki",
+    "llm-wiki",
+    "karpathy",
+    "personal-knowledge-base",
+    "second-brain",
+    "obsidian-vault",
     "obsidian",
-    "knowledge-management",
-    "llm",
+    "mcp",
+    "mcp-server",
     "claude-code",
     "codex",
     "cursor",
-    "mcp",
-    "second-brain",
+    "openclaw",
+    "hermes-agent",
+    "agent-tooling",
+    "knowledge-management",
+    "rag-alternative",
+    "compounding-knowledge",
     "opc",
     "one-person-company"
   ],
@@ -23,7 +31,15 @@
     "dist",
     "templates",
     "README.md",
-    "LICENSE"
+    "LICENSE",
+    "INSPIRATION.md",
+    "STABILITY.md",
+    "CHANGELOG.md",
+    "CONTRIBUTING.md",
+    "SECURITY.md",
+    "llms.txt",
+    "agents.json",
+    "docs/INSTALL-FOR-AGENTS.md"
   ],
   "scripts": {
     "build": "tsup",
@@ -31,6 +47,8 @@
     "start": "node ./dist/cli.js",
     "clean": "rm -rf dist",
     "test:smoke": "npm run build && node ./scripts/smoke-scaffold.mjs",
+    "test:e2e": "npm run build && node ./scripts/e2e.mjs",
+    "test": "npm run test:smoke && npm run test:e2e",
     "prepublishOnly": "npm run clean && npm run build"
   },
   "engines": {

@@ -190,19 +190,30 @@ export async function scaffold(
     result.dirsCreated++;
   }
 
-  // 10. Extras — recipes / mcp / astro. These ship as future template directories;
-  // skip gracefully when not yet present (Phase 3.5/3.6/3.7 wires them in).
+  // 10. Extras — recipes / mcp / site.
   for (const extra of answers.extras) {
     const src = path.join(templatesDir, extra);
     if (!existsSync(src)) {
-      result.skipped.push(`${extra} (template not yet bundled — coming in v0.1)`);
+      result.skipped.push(`${extra} (template not bundled in this build)`);
       continue;
     }
-    if (extra === 'mcp' || extra === 'recipes' || extra === 'astro') {
+    if (extra === 'mcp' || extra === 'recipes' || extra === 'site') {
       await copyDir(src, path.join(targetDir, extra));
       result.dirsCreated++;
-      // mcp + astro contain .tpl files; render each.
+      // mcp + site contain .tpl files; render each.
       await renderTplsInPlace(path.join(targetDir, extra), view);
+    }
+  }
+
+  // 10b. If the site extra is enabled, drop the GitHub Pages workflow at the
+  // vault root .github/workflows/ (not inside site/), where Actions expects it.
+  if (answers.extras.includes('site')) {
+    const wfSrc = path.join(templatesDir, 'workflows', 'wiki-publish.yml');
+    if (existsSync(wfSrc)) {
+      const wfDest = path.join(targetDir, '.github', 'workflows', 'wiki-publish.yml');
+      await mkdir(path.dirname(wfDest), { recursive: true });
+      await copyFile(wfSrc, wfDest);
+      result.filesWritten++;
     }
   }
 

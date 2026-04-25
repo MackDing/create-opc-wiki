@@ -2,7 +2,8 @@
 
 > Built with [create-opc-wiki](https://github.com/MackDing/create-opc-wiki).
 > An Obsidian Vault for compounding knowledge, on the
-> [Karpathy LLM Wiki Pattern](https://karpathy.bearblog.dev).
+> [Karpathy LLM Wiki pattern](https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f)
+> (April 2026 gist). See [[INSPIRATION|attribution]] for the lineage.
 
 New here? Read [[USAGE|the usage guide]].
 

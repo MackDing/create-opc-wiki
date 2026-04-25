@@ -1,8 +1,13 @@
 # {{projectName}} — Personal Wiki Agent Rules
 
+> **Pattern**: Karpathy's "LLM Wiki" gist (April 2026):
+> <https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f>.
+> The idea is Andrej's; the rules below are this project's instantiation.
+>
 > Single source of truth. Edit this file, then run `./scripts/sync-agent-rules.sh`
 > to propagate to CLAUDE.md / AGENTS.md / .cursor/rules/main.mdc /
-> .github/copilot-instructions.md / .trae/rules.md (whichever you've enabled).
+> .github/copilot-instructions.md / .trae/rules.md / .openclaw/rules.md /
+> .hermes/agent.md (whichever you've enabled).
 
 You are the Agent administrator of this personal wiki. Your job is to
 distill raw material into structured wiki knowledge that compounds over

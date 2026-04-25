@@ -6,7 +6,10 @@ export type AgentKey =
   | 'cursor'
   | 'cursor-legacy'
   | 'vscode'
-  | 'trae';
+  | 'trae'
+  | 'openclaw'
+  | 'hermes'
+  | 'opencode';
 
 export interface AgentTarget {
   key: AgentKey;
@@ -60,8 +63,26 @@ export const AGENT_TARGETS: readonly AgentTarget[] = [
   {
     key: 'trae',
     label: 'Trae IDE',
-    description: 'Trae IDE — reads .trae/rules.md (path verified per Trae docs)',
+    description: 'Trae IDE — reads .trae/rules.md',
     rulesPath: '.trae/rules.md',
+  },
+  {
+    key: 'openclaw',
+    label: 'OpenClaw agent',
+    description: 'OpenClaw IM-based agent — reads .openclaw/rules.md',
+    rulesPath: '.openclaw/rules.md',
+  },
+  {
+    key: 'hermes',
+    label: 'Hermes-agent',
+    description: 'Hermes IM agent — reads .hermes/agent.md',
+    rulesPath: '.hermes/agent.md',
+  },
+  {
+    key: 'opencode',
+    label: 'OpenCode CLI',
+    description: 'OpenCode / Pi — reads AGENTS.md (shares with Codex)',
+    rulesPath: 'AGENTS.md',
   },
 ] as const;
 
@@ -69,4 +90,8 @@ export function findAgentByKey(key: AgentKey): AgentTarget {
   const t = AGENT_TARGETS.find((a) => a.key === key);
   if (!t) throw new Error(`Unknown agent target: ${key}`);
   return t;
+}
+
+export function isAgentKey(s: string): s is AgentKey {
+  return AGENT_TARGETS.some((a) => a.key === s);
 }

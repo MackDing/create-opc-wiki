@@ -6,6 +6,22 @@ last-updated: {{today}}
 
 # {{projectName}} — Usage Guide
 
+## Background
+
+This wiki follows the **"LLM Wiki" pattern** described by Andrej Karpathy in
+this gist (April 2026):
+<https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f>.
+
+Core idea: instead of re-deriving answers from raw documents on every query
+(plain RAG), an LLM agent **compiles knowledge** into a persistent wiki that
+compounds as you ingest new sources. You curate; the agent maintains.
+
+For full attribution, verbatim quotes from the gist, and the deltas this
+package adds (privacy frontmatter, confidence decay, multi-agent sync, MCP,
+SEO/GEO publish), see the project's `INSPIRATION.md`.
+
+---
+
 Two ways to use this wiki, side by side.
 
 ## Entry 1: Obsidian — daily reading & writing

@@ -1,0 +1,51 @@
+{
+  "name": "create-opc-wiki",
+  "version": "1.0.0",
+  "description": "Scaffold a personal LLM wiki (Karpathy pattern). MCP-ready, multi-agent, publishable.",
+  "homepage": "https://github.com/MackDing/create-opc-wiki",
+  "license": "MIT",
+  "inspired_by": {
+    "title": "LLM Wiki",
+    "author": "Andrej Karpathy",
+    "url": "https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f"
+  },
+  "install": {
+    "npx": "npx -y create-opc-wiki@latest --yes",
+    "npm": "npm create opc-wiki -- --yes",
+    "bunx": "bunx create-opc-wiki@latest --yes"
+  },
+  "flags": {
+    "--yes": "skip all prompts (required for non-interactive install)",
+    "--name": "project dir name (or first positional)",
+    "--domains": "csv of knowledge domains",
+    "--agents": "csv of agent rule targets",
+    "--no-mcp": "skip MCP server",
+    "--no-site": "skip Astro static site",
+    "--no-recipes": "skip source ingest recipes",
+    "--no-git": "skip git init",
+    "--json": "machine-readable result on stdout"
+  },
+  "supported_agents": [
+    "claude",
+    "codex",
+    "opencode",
+    "cursor",
+    "cursor-legacy",
+    "vscode",
+    "trae",
+    "openclaw",
+    "hermes"
+  ],
+  "capabilities": [
+    "scaffold-wiki",
+    "mcp-server",
+    "static-site-publish",
+    "multi-agent-rules",
+    "privacy-frontmatter"
+  ],
+  "examples": {
+    "minimal": "npx -y create-opc-wiki@latest my-wiki --yes",
+    "openclaw_im": "npx -y create-opc-wiki@latest ~/wiki --yes --agents=openclaw,claude",
+    "research_no_site": "npx -y create-opc-wiki@latest research --yes --domains=ai,bio,papers --no-site"
+  }
+}

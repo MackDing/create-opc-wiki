@@ -130,3 +130,7 @@ tailscale funnel status
 Most users do not need this. Local Obsidian on a single device is sufficient
 for personal wikis. Add remote access only when you actually want to capture
 ideas from your phone or a different machine.
+
+---
+
+Part of a personal LLM wiki built on the [Karpathy "LLM Wiki" pattern](https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f).

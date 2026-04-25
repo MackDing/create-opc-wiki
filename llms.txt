@@ -1,22 +1,70 @@
-# LLM Metadata for AI Agents
+# create-opc-wiki
 
-## Description
-This repository contains resources for building AI agents and automation tools.
+> Scaffold a personal LLM wiki (Karpathy pattern) in 30 seconds.
+> MCP-ready, multi-agent, publishable as an SEO/GEO-optimized static site.
 
-## Tech Stack
-- Python
-- MCP (Model Context Protocol)
-- Claude Code / Codex
+## What it is
 
-## Use Cases
-- AI agent development
-- Automated tool orchestration
-- Multi-agent coordination
+A `npx`-installable scaffolder that drops a complete, agent-ready knowledge
+base into a folder. Built around the pattern Andrej Karpathy described in
+the "LLM Wiki" gist (April 2026):
+<https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f>.
+
+Compile knowledge once with an LLM agent; never re-derive it on every query.
+
+## Install
+
+One paste, no prompts, works from any agent:
+
+```
+npx -y create-opc-wiki@latest ~/wiki --yes --agents=claude,codex,cursor,openclaw,hermes
+```
+
+For per-agent recipes (Claude Code, Codex, Cursor, VSCode, OpenClaw, Hermes,
+OpenCode/Pi): see `/docs/INSTALL-FOR-AGENTS.md`.
+
+## What it scaffolds
+
+- `agent-rules/main.md` — single source of truth, synced to CLAUDE.md /
+  AGENTS.md / .cursor/rules/main.mdc / .github/copilot-instructions.md /
+  .trae/rules.md / .openclaw/rules.md / .hermes/agent.md
+- Three skills: `/wiki-ingest`, `/wiki-query`, `/wiki-lint`
+- Five source recipes: arXiv paper, X thread, YouTube transcript, RSS article,
+  podcast transcript
+- Privacy-tagged frontmatter: `public | private | secret`
+- An MCP server (queryable from Claude Desktop, Cursor, Codex)
+- An optional Astro Starlight static site target with sitemap.xml, llms.txt,
+  robots.txt, RSS feed, OpenGraph + JSON-LD
+
+## How it differs from raw RAG
+
+Most LLM-on-files setups (NotebookLM, ChatGPT file uploads) re-derive answers
+from raw documents at query time. This one **compiles knowledge into a wiki**
+that compounds as you ingest. The cross-references already exist. The
+contradictions have already been flagged. The synthesis already reflects
+everything you've read.
+
+## Capabilities at a glance
+
+- Multi-agent native (works with 9 agent rule formats)
+- MCP server (3 tools: `wiki_query`, `wiki_list`, `wiki_read`)
+- Privacy-aware static site publish (only `privacy: public` pages ship)
+- Confidence decay: stale `speculative` claims get flagged for re-evaluation
+- Zero-prompt install path for IM-based agents
 
 ## License
-MIT - See LICENSE file for details
 
-## More Info
-- [Main Hub](https://opc.ren)
-- [CodexClaw Remote Access](https://github.com/MackDing/CodexClaw)
-- [Awesome AI API Directory](https://github.com/MackDing/awesome-ai-api)
+MIT. See `LICENSE`. Inspired by [Andrej Karpathy](https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f);
+implementation choices are this project's. Full credit in `INSPIRATION.md`.
+
+## OPC Ecosystem
+
+Part of the [OPC](https://opc.ren) (One Person Company) toolkit by
+[@MackDing](https://github.com/MackDing). Sibling projects:
+
+- [opc.ren](https://opc.ren) — founder hub
+- [CodexClaw](https://github.com/MackDing/CodexClaw) — Telegram bot for remote Codex
+- [awesome-ai-api](https://github.com/MackDing/awesome-ai-api) — AI API gateway leaderboard
+- [claude-context-health](https://github.com/MackDing/claude-context-health) — Claude session diagnostics
+- [opc-daily-signal](https://github.com/MackDing/opc-daily-signal) — daily decision intelligence
+- [doc-preprocess-hub](https://github.com/MackDing/doc-preprocess-hub) — enterprise doc preprocessing
