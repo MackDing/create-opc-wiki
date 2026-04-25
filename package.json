@@ -21,6 +21,7 @@
   },
   "files": [
     "dist",
+    "templates",
     "README.md",
     "LICENSE"
   ],
@@ -29,6 +30,7 @@
     "dev": "tsup --watch",
     "start": "node ./dist/cli.js",
     "clean": "rm -rf dist",
+    "test:smoke": "npm run build && node ./scripts/smoke-scaffold.mjs",
     "prepublishOnly": "npm run clean && npm run build"
   },
   "engines": {

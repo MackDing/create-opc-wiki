@@ -1,21 +1,58 @@
 // create-opc-wiki — CLI entry point.
-// Wires together: prompts -> scaffold -> star hook.
-// Implementation comes online over Phase 3-4. This file is the skeleton.
+// Wires prompts -> scaffold -> star hook.
 
-import { intro, outro, cancel, isCancel } from '@clack/prompts';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+import { intro, outro, log, note, isCancel, cancel } from '@clack/prompts';
 import chalk from 'chalk';
+import { runPrompts } from './prompts.js';
+import { scaffold } from './scaffold.js';
+import { resolveTemplatesDir } from './paths.js';
+import { runStarHook } from './star-hook.js';
 
 const VERSION = '0.1.0-alpha.0';
 
 async function main(): Promise<void> {
+  const positional = process.argv[2]?.trim();
+
   console.log();
   intro(chalk.bgCyan.black(` create-opc-wiki v${VERSION} `));
 
-  // TODO Phase 3: collect answers via runPrompts()
-  // TODO Phase 3: render templates via runScaffold(answers)
-  // TODO Phase 4: ask for ⭐ via runStarHook()
+  const answers = await runPrompts(positional);
 
-  outro(chalk.gray('Phase 1 bootstrap. Prompts + scaffold land in Phase 3.'));
+  const cwd = process.cwd();
+  const targetDir = path.resolve(cwd, answers.targetDir);
+
+  let result;
+  try {
+    result = await scaffold(resolveTemplatesDir(), targetDir, answers);
+  } catch (err) {
+    cancel(`Scaffold failed: ${err instanceof Error ? err.message : String(err)}`);
+    process.exit(1);
+  }
+
+  const skippedNote =
+    result.skipped.length > 0
+      ? '\n  Skipped: ' + result.skipped.join(', ')
+      : '';
+
+  note(
+    [
+      `${chalk.green('✓')} Wrote ${result.filesWritten} files / ${result.dirsCreated} dirs to ${chalk.bold(targetDir)}`,
+      `${chalk.gray('Next steps:')}`,
+      `  cd ${answers.projectName}`,
+      `  # Open in Obsidian: File → Open Vault → this folder`,
+      `  # Or fire up your AI agent and try /wiki-ingest <url>`,
+      skippedNote,
+    ]
+      .filter(Boolean)
+      .join('\n'),
+    'Done',
+  );
+
+  await runStarHook();
+
+  outro(chalk.cyan('Happy compounding. ✨'));
 }
 
 main().catch((err) => {
