@@ -1,0 +1,9 @@
+{
+  "useMarkdownLinks": false,
+  "newLinkFormat": "shortest",
+  "attachmentFolderPath": "raw/attachments",
+  "newFileLocation": "folder",
+  "newFileFolderPath": "wiki",
+  "defaultViewMode": "preview",
+  "alwaysUpdateLinks": true
+}
