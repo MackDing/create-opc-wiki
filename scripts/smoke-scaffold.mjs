@@ -105,12 +105,13 @@ console.log('\n[1/5] programmatic scaffold via api.js');
     else fail('confidence decay missing');
 
     const targets = (await readFile(path.join(target, 'agent-rules/.targets'), 'utf8'))
-      .split('\n').filter(Boolean);
+      .split(/\r?\n/).map((s) => s.trim()).filter(Boolean);
     if (['claude', 'codex', 'cursor'].every((e) => targets.includes(e))) ok('.targets enumerates agents');
     else fail(`.targets mismatch: ${targets.join(',')}`);
 
     const mdc = await readFile(path.join(target, '.cursor/rules/main.mdc'), 'utf8');
-    if (mdc.startsWith('---\ndescription: Personal wiki agent rules\nalwaysApply: true\n---')) ok('Cursor mdc prefix present');
+    const mdcNormalized = mdc.replace(/\r\n/g, '\n');
+    if (mdcNormalized.startsWith('---\ndescription: Personal wiki agent rules\nalwaysApply: true\n---')) ok('Cursor mdc prefix present');
     else fail('Cursor mdc prefix malformed');
 
     const usage = await readFile(path.join(target, 'USAGE.md'), 'utf8');
@@ -327,7 +328,7 @@ console.log('\n[*] repo-level Karpathy attribution regression');
 console.log('\n[*] README structural regression');
 {
   const readme = await readFile(path.join(repoRoot, 'README.md'), 'utf8');
-  const cliFlagHeadings = readme.match(/^## CLI flags$/gm) ?? [];
+  const cliFlagHeadings = readme.match(/^## CLI flags\s*$/gm) ?? [];
   if (cliFlagHeadings.length === 1) ok('exactly one "## CLI flags" heading in README');
   else fail(`README has ${cliFlagHeadings.length} "## CLI flags" headings (expected 1)`);
 }

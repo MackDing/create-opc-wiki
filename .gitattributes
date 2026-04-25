@@ -1,0 +1,8 @@
+# Enforce LF line endings for all text files across checkouts.
+# Prevents Windows autocrlf from breaking tests that assert on '\n'.
+* text=auto eol=lf
+
+# Binary explicit
+*.png binary
+*.jpg binary
+*.ico binary
