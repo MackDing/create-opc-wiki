@@ -1,0 +1,22 @@
+# LLM Metadata for AI Agents
+
+## Description
+This repository contains resources for building AI agents and automation tools.
+
+## Tech Stack
+- Python
+- MCP (Model Context Protocol)
+- Claude Code / Codex
+
+## Use Cases
+- AI agent development
+- Automated tool orchestration
+- Multi-agent coordination
+
+## License
+MIT - See LICENSE file for details
+
+## More Info
+- [Main Hub](https://opc.ren)
+- [CodexClaw Remote Access](https://github.com/MackDing/CodexClaw)
+- [Awesome AI API Directory](https://github.com/MackDing/awesome-ai-api)
