@@ -1,0 +1,59 @@
+{
+  "name": "create-opc-wiki",
+  "version": "0.1.0-alpha.0",
+  "description": "Build your own local LLM Wiki in 30 seconds. Multi-agent native (Claude/Codex/Cursor/VSCode/Trae), MCP server built-in, Astro static site publishing.",
+  "keywords": [
+    "wiki",
+    "obsidian",
+    "knowledge-management",
+    "llm",
+    "claude-code",
+    "codex",
+    "cursor",
+    "mcp",
+    "second-brain",
+    "opc",
+    "one-person-company"
+  ],
+  "type": "module",
+  "bin": {
+    "create-opc-wiki": "./dist/cli.js"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "start": "node ./dist/cli.js",
+    "clean": "rm -rf dist",
+    "prepublishOnly": "npm run clean && npm run build"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "license": "MIT",
+  "author": "MackDing",
+  "homepage": "https://github.com/MackDing/create-opc-wiki",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MackDing/create-opc-wiki.git"
+  },
+  "bugs": {
+    "url": "https://github.com/MackDing/create-opc-wiki/issues"
+  },
+  "dependencies": {
+    "@clack/prompts": "^0.11.0",
+    "chalk": "^5.6.2",
+    "mustache": "^4.2.0",
+    "open": "^10.2.0"
+  },
+  "devDependencies": {
+    "@types/mustache": "^4.2.6",
+    "@types/node": "^22.10.5",
+    "tsup": "^8.5.0",
+    "typescript": "^5.7.3"
+  }
+}
