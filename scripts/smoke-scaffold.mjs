@@ -20,7 +20,7 @@ import { rm, readFile, access, writeFile, mkdir, stat } from 'node:fs/promises';
 import { spawn } from 'node:child_process';
 import { appendFileSync } from 'node:fs';
 import path from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 import { tmpdir } from 'node:os';
 import os from 'node:os';
 
@@ -108,7 +108,9 @@ const cleanup = async (p) => {
 console.log('\n[1/5] programmatic scaffold via api.js');
 {
   const apiPath = path.join(repoRoot, 'dist/api.js');
-  const { scaffold, resolveTemplatesDir, DEFAULT_DOMAINS } = await import(apiPath);
+  // On Windows, dynamic import() requires a file:// URL, not a bare absolute path
+  // (otherwise the drive letter is parsed as a URL protocol like 'd:').
+  const { scaffold, resolveTemplatesDir, DEFAULT_DOMAINS } = await import(pathToFileURL(apiPath).href);
 
   const target = path.join(tmpdir(), `opc-smoke-prog-${Date.now()}`);
   try {
