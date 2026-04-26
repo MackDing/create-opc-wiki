@@ -1,5 +1,6 @@
 // Answer resolution. Combines flags / env / interactive prompts / defaults.
 
+import path from 'node:path';
 import {
   text,
   multiselect,
@@ -73,10 +74,14 @@ export async function resolveAnswers(
   // Project name
   let projectName: string;
   const nameFromInput = flags.name ?? positional;
+  // The user can pass a full path (relative or absolute, POSIX or Windows).
+  // Validate the BASENAME against the project-name regex; the directory part
+  // is allowed to be anything the OS supports.
   if (nameFromInput) {
-    if (!PROJECT_NAME_RE.test(nameFromInput.split('/').pop() ?? nameFromInput)) {
+    const basename = path.basename(nameFromInput.replace(/[\\/]+$/, ''));
+    if (!PROJECT_NAME_RE.test(basename)) {
       throw new Error(
-        `Invalid project name '${nameFromInput}'. Use letters, digits, dot, dash, underscore.`,
+        `Invalid project name '${basename}' (from '${nameFromInput}'). Use letters, digits, dot, dash, underscore.`,
       );
     }
     projectName = nameFromInput;
@@ -90,7 +95,8 @@ export async function resolveAnswers(
         defaultValue: 'my-wiki',
         validate(value) {
           if (!value || value.length === 0) return undefined;
-          if (!PROJECT_NAME_RE.test(value.split('/').pop() ?? value)) {
+          const basename = path.basename(value.replace(/[\\/]+$/, ''));
+          if (!PROJECT_NAME_RE.test(basename)) {
             return 'Use letters, digits, dot, dash, underscore.';
           }
           return undefined;
@@ -213,7 +219,7 @@ export async function resolveAnswers(
   const targetDir = projectName;
 
   return {
-    projectName: projectName.split('/').pop() ?? projectName,
+    projectName: path.basename(projectName.replace(/[\\/]+$/, '')) || projectName,
     targetDir,
     domains,
     agents,
