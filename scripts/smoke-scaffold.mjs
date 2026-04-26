@@ -16,19 +16,46 @@
 // For a full integration test (real npm install, MCP boot, site build),
 // run scripts/e2e.mjs. That requires network for npm install.
 
-import { rm, readFile, access, writeFile, mkdir } from 'node:fs/promises';
+import { rm, readFile, access, writeFile, mkdir, stat } from 'node:fs/promises';
 import { spawn } from 'node:child_process';
+import { appendFileSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { tmpdir } from 'node:os';
+import os from 'node:os';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const repoRoot = path.resolve(here, '..');
 const cliPath = path.join(repoRoot, 'dist/cli.js');
 const KARPATHY_GIST = '442a6bf555914893e9891c11519de94f';
 
+// Platform diagnostics — print up front so any failure has context in the run output.
+console.log(`[smoke] platform=${process.platform} arch=${process.arch} node=${process.version}`);
+console.log(`[smoke] cwd=${process.cwd()}`);
+console.log(`[smoke] tmpdir=${tmpdir()}`);
+console.log(`[smoke] cliPath=${cliPath}`);
+
 let failed = 0;
-const fail = (msg) => { console.log(`  ✗ ${msg}`); failed++; };
+function dumpContext(label, content, max = 500) {
+  const head = (content ?? '').slice(0, max);
+  const bytes = Array.from(head.slice(0, 80)).map((c) => c.charCodeAt(0).toString(16).padStart(2, '0')).join(' ');
+  console.log(`     ${label} (first ${max} chars):`);
+  console.log(`     ${head.replace(/\r/g, '\\r').replace(/\n/g, '\\n\n     ')}`);
+  console.log(`     hex(first 80 bytes): ${bytes}`);
+}
+const fail = (msg, ctx) => {
+  console.log(`  ✗ ${msg}`);
+  if (ctx) console.log(`     context: ${typeof ctx === 'string' ? ctx.slice(0, 400).replace(/\r/g,'\\r').replace(/\n/g,'\\n') : JSON.stringify(ctx).slice(0, 400)}`);
+  failed++;
+  if (process.env.GITHUB_STEP_SUMMARY) {
+    try {
+      appendFileSync(process.env.GITHUB_STEP_SUMMARY,
+        `- ❌ \`${process.platform}/node${process.version}\` ${msg}` +
+        (ctx ? `\n  - context: \`${String(ctx).slice(0, 200).replace(/\n/g,'\\n').replace(/\r/g,'\\r').replace(/`/g, '\\`')}\`` : '') +
+        '\n');
+    } catch {}
+  }
+};
 const ok = (msg) => console.log(`  ✓ ${msg}`);
 
 function runCli(args) {
@@ -36,7 +63,7 @@ function runCli(args) {
     const proc = spawn(process.execPath, [cliPath, ...args], {
       stdio: ['ignore', 'pipe', 'pipe'],
       env: process.env,
-      timeout: 15_000,
+      timeout: 30_000, // bumped from 15s for slower Windows runners
     });
     let stdout = '';
     let stderr = '';
@@ -89,8 +116,9 @@ console.log('\n[1/5] programmatic scaffold via api.js');
       'recipes/_index.md', 'recipes/arxiv-paper.md',
     ];
     for (const rel of required) {
-      if (await exists(path.join(target, rel))) ok(rel);
-      else fail(`MISSING: ${rel}`);
+      const full = path.join(target, rel);
+      if (await exists(full)) ok(rel);
+      else fail(`MISSING: ${rel}`, `looked at: ${full}`);
     }
 
     const main = await readFile(path.join(target, 'agent-rules/main.md'), 'utf8');
@@ -107,12 +135,12 @@ console.log('\n[1/5] programmatic scaffold via api.js');
     const targets = (await readFile(path.join(target, 'agent-rules/.targets'), 'utf8'))
       .split(/\r?\n/).map((s) => s.trim()).filter(Boolean);
     if (['claude', 'codex', 'cursor'].every((e) => targets.includes(e))) ok('.targets enumerates agents');
-    else fail(`.targets mismatch: ${targets.join(',')}`);
+    else fail(`.targets mismatch: ${targets.join(',')}`, JSON.stringify(targets));
 
     const mdc = await readFile(path.join(target, '.cursor/rules/main.mdc'), 'utf8');
     const mdcNormalized = mdc.replace(/\r\n/g, '\n');
     if (mdcNormalized.startsWith('---\ndescription: Personal wiki agent rules\nalwaysApply: true\n---')) ok('Cursor mdc prefix present');
-    else fail('Cursor mdc prefix malformed');
+    else { fail('Cursor mdc prefix malformed'); dumpContext('mdc head', mdc, 200); }
 
     const usage = await readFile(path.join(target, 'USAGE.md'), 'utf8');
     if (usage.includes(KARPATHY_GIST)) ok('Karpathy gist URL in USAGE.md');
@@ -160,10 +188,10 @@ console.log('\n[2/5] CLI subprocess: agent-IM install path (--yes --json)');
   try {
     const r = await runCli([target, '--yes', '--agents=openclaw,hermes,claude', '--json', '--no-git']);
     if (r.code !== 0) {
-      fail(`CLI exited ${r.code}\nstderr: ${r.stderr}\nstdout: ${r.stdout}`);
+      fail(`CLI exited ${r.code}`, `stderr: ${r.stderr.slice(0, 400)} | stdout: ${r.stdout.slice(0, 400)}`);
     } else {
       let parsed;
-      try { parsed = JSON.parse(r.stdout); } catch { fail(`stdout not JSON: ${r.stdout.slice(0, 200)}`); }
+      try { parsed = JSON.parse(r.stdout); } catch (e) { fail(`stdout not JSON`, `parse error: ${e.message} | stdout: ${r.stdout.slice(0, 400)}`); }
       if (parsed?.ok === true) ok('--json emitted ok:true');
       else fail(`json result not ok: ${r.stdout}`);
 
