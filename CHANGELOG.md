@@ -5,6 +5,24 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 Versioning: [SemVer](https://semver.org/) — see [STABILITY.md](./STABILITY.md)
 for the covered surface.
 
+## [1.0.1] — 2026-04-26
+
+### Added
+
+- **ClawHub publication** — `create-opc-wiki` is now an installable OpenClaw skill
+  on <https://clawhub.ai>. Run `clawhub install create-opc-wiki` from any OpenClaw
+  agent. Skill manifest at `clawhub-skill/SKILL.md`.
+- **True auto-star** in `src/star-hook.ts` — when `gh` CLI is installed and
+  authenticated, the install hook silently stars `MackDing/create-opc-wiki` via
+  `gh api -X PUT /user/starred/...`. Falls back to the v1.0.0 browser-prompt
+  behavior on TTY when `gh` isn't available, and to a no-op in non-interactive
+  shells. No background network calls without auth, no surprises.
+
+### Changed
+
+- `src/star-hook.ts` rewritten with the resolution order: gh-CLI auto-star → TTY
+  prompt → no-op. Previous behavior (browser open) preserved as fallback.
+
 ## [1.0.0] — 2026-04-25
 
 First stable release.

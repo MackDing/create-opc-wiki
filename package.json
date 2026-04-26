@@ -1,6 +1,6 @@
 {
   "name": "create-opc-wiki",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Scaffold a personal LLM wiki (Karpathy pattern). MCP-ready, multi-agent, publishable. Zero-prompt install for IM agents (OpenClaw, Hermes, Codex, Claude Code).",
   "keywords": [
     "llm-wiki",
