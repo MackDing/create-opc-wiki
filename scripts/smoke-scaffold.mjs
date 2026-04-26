@@ -35,6 +35,22 @@ console.log(`[smoke] cwd=${process.cwd()}`);
 console.log(`[smoke] tmpdir=${tmpdir()}`);
 console.log(`[smoke] cliPath=${cliPath}`);
 
+// Global crash handlers — surface uncaught errors as workflow annotations
+// (otherwise a thrown await inside a try-block-with-no-catch crashes silently
+// before any fail() runs, and the public API only sees "exit code 1").
+const surfaceCrash = (kind, err) => {
+  const msg = err instanceof Error ? err.message : String(err);
+  const stack = (err instanceof Error && err.stack) ? err.stack.replace(/[\r\n]+/g, ' | ').slice(0, 800) : '';
+  console.log(`\n[smoke] CRASH (${kind}) on ${process.platform}/node${process.version}: ${msg}`);
+  if (stack) console.log(`[smoke] stack: ${stack}`);
+  if (process.env.GITHUB_ACTIONS) {
+    console.log(`::error file=scripts/smoke-scaffold.mjs::[CRASH/${kind}/${process.platform}/node${process.version}] ${msg} | ${stack}`);
+  }
+  process.exit(1);
+};
+process.on('uncaughtException', (err) => surfaceCrash('uncaughtException', err));
+process.on('unhandledRejection', (err) => surfaceCrash('unhandledRejection', err));
+
 let failed = 0;
 function dumpContext(label, content, max = 500) {
   const head = (content ?? '').slice(0, max);
