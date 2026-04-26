@@ -47,6 +47,12 @@ const fail = (msg, ctx) => {
   console.log(`  ✗ ${msg}`);
   if (ctx) console.log(`     context: ${typeof ctx === 'string' ? ctx.slice(0, 400).replace(/\r/g,'\\r').replace(/\n/g,'\\n') : JSON.stringify(ctx).slice(0, 400)}`);
   failed++;
+  // Workflow command — surfaces as a job annotation visible in the public API
+  // even without admin log-download rights.
+  if (process.env.GITHUB_ACTIONS) {
+    const safeCtx = ctx ? ` | ctx: ${String(ctx).slice(0, 200).replace(/\r/g,'\\r').replace(/\n/g,'\\n')}` : '';
+    console.log(`::error file=scripts/smoke-scaffold.mjs::[${process.platform}/node${process.version}] ${msg}${safeCtx}`);
+  }
   if (process.env.GITHUB_STEP_SUMMARY) {
     try {
       appendFileSync(process.env.GITHUB_STEP_SUMMARY,
